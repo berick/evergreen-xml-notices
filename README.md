@@ -77,8 +77,10 @@ sudo -u opensrf mkdir -p /openils/var/data/xml-notices
 
 #### Example 1
 
+* Remove **--send-email** to generate the XML file without sending it.
+
 ```sh
-./generate-notices.sh --granularity Hold-Shelf-Expire-Email
+./generate-notices.sh --granularity Hold-Shelf-Expire-Email --send-xml
 ```
 
 #### Example 2
