@@ -10,11 +10,11 @@ notices.
 
 ### Create an Action/Trigger Event Definition
 
-* Use the 'NOOP\_True' reactor.
+* Use the **NOOP\_True** reactor.
   * The purpose of the event definition is only to collect target 
     (e.g. circulation ID) information.
 * No template is nececessary
-* It should NOT have a group\_field value.  
+* It should **NOT** have a group\_field value.  
   * Grouping is done by the script.
 * Give it a unique granularity
 * No environment data will be needed, unless one of the other modules
@@ -47,9 +47,9 @@ notices.
 
 ### Edit generate-notices.sh
 
-1. Set the required value for the 'SCP\_DEST' variable.
+1. Set the required value for the **SCP\_DEST** variable.
 1. Comment-out the KCLS notifications configured within the 
-   'case $GRANULARITY in' block
+   "case $GRANULARITY in" block
 1. Add your new notice to the file to the same block
 ```sh
 
@@ -81,7 +81,7 @@ sudo -u opensrf mkdir -p /openils/var/data/xml-notices
 #### Example 2
 
 By default, the script processes events whose run\_time occurred yesterday,
-but this can be modified via the '--end-date' and '--window' variables.
+but this can be modified via the **--end-date** and **--window** variables.
 
 ```sh
 ./generate-notices.sh --send-xml --window "1 hour" \
