@@ -48,9 +48,9 @@ notices.
 ### Edit generate-notices.sh
 
 1. Set the required value for the **SCP\_DEST** variable.
-1. Comment-out the KCLS notifications configured within the "case $GRANULARITY in" block
-  * Different notice types use different options; the sample notices
-    are a useful reference.
+1. Comment-out the KCLS notifications configured within the 
+   "case $GRANULARITY in" block.  I left the KCLS notices for reference,
+   since Different notice types use different options.
 1. Add your new notice to the file to the same block
 ```sh
 
@@ -62,6 +62,8 @@ case $GRANULARITY in
         export NOTICE_TAG=hold-shelf-expire                                    
         export NOTICE_TYPE="hold shelf expire email"                           
         ;; 
+
+    # Other notices here...
 
 esac
 
@@ -83,6 +85,10 @@ sudo -u opensrf mkdir -p /openils/var/data/xml-notices
 
 By default, the script processes events whose run\_time occurred yesterday,
 but this can be modified via the **--end-date** and **--window** variables.
+
+This example would be executed hourly to process events whose run time
+fell within the previous hour.
+
 
 ```sh
 ./generate-notices.sh --send-xml --window "1 hour" \
