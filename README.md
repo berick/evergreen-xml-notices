@@ -49,7 +49,7 @@ notices.
 
 1. Set the required value for the **SCP\_DEST** variable.
 1. Comment-out the KCLS notifications configured within the "case $GRANULARITY in" block
- 1. Different notice types use different options; the sample notices
+  * Different notice types use different options; the sample notices
     are a useful reference.
 1. Add your new notice to the file to the same block
 ```sh
