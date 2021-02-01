@@ -1,0 +1,17 @@
+[%- USE date -%]
+[%- FOR circ IN circulations %]
+    <item>
+      [%- copy_details = get_title_author(circ.target_copy) %]
+      <title>[% escape_xml(copy_details.title) %]</title>
+      <author>[% escape_xml(copy_details.author) %]</author>
+      <checkout_date>[% date.format(format_date(circ.xact_start), '%m/%d/%Y') %]</checkout_date>
+      <due_date>[% date.format(format_date(circ.due_date), '%m/%d/%Y') %]</due_date>
+      <call_number>[% escape_xml(circ.target_copy.call_number.label) %]</call_number>
+      <barcode>[% escape_xml(circ.target_copy.barcode) %]</barcode>
+      <shelf_location>[% escape_xml(circ.target_copy.location.name) %]</shelf_location>
+      <item_price>[% get_copy_price(circ.target_copy, circ.target_copy.call_number) %]</item_price>
+      <total_owed>[% circ.billable_transaction.summary.balance_owed | format('%.02f') %]</total_owed>
+      <circ_id>[% circ.id %]</circ_id>
+    </item>
+[%- END %]
+    <total_notice_fines>[% total_notice_fines | format('%.02f') %]</total_notice_fines>

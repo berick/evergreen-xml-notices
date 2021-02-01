@@ -1,0 +1,57 @@
+[%- 
+USE date;
+SET user_addr = user.mailing_address || user.billing_address;
+SET org_addr = context_org.mailing_address || context_org.billing_address;
+
+# All notices render user and context org unit information.
+# Depending on the core type of each notice, circulations, holds, or
+# transactions will be listed as "items".
+-%]
+  <notice type="[% notice_type %]"[% IF notify_interval %] notify_interval="[% notify_interval%]"[% END %]>
+    <patron>
+      <barcode>[% escape_xml(user.card.barcode) %]</barcode>
+      [%- IF notice_type == 'ecard' %]
+      <verification_code>[% escape_xml(user.ident_value) %]</verification_code>
+      [%- END %]
+      <profile_id>[% user.profile %]</profile_id>
+      <first_given_name>[% escape_xml(user.first_given_name) %]</first_given_name>
+      <family_name>[% escape_xml(user.family_name) %]</family_name>
+      [%- IF !for_email -%]
+      [%- IF !user_addr OR user_addr.valid == 'f' %]
+      <addr_valid>false</addr_valid>
+      [%- ELSE %]
+      <addr_valid>true</addr_valid>
+      [%- END %]
+      <addr_street1>[% escape_xml(user_addr.street1) %]</addr_street1>
+      <addr_street2>[% escape_xml(user_addr.street2) %]</addr_street2>
+      <addr_city>[% escape_xml(user_addr.city) %]</addr_city>
+      <addr_state>[% escape_xml(user_addr.state) %]</addr_state>
+      <addr_post_code>[% escape_xml(user_addr.post_code) %]</addr_post_code>
+      <day_phone>[% user.day_phone %]</day_phone>
+      <evening_phone>[% user.evening_phone %]</evening_phone>
+      <other_phone>[% user.other_phone %]</other_phone>
+      [%- END %]
+      <email>[% escape_xml(user.email) %]</email>
+      <sys_id>[% user.id %]</sys_id>
+      <total_balance_owed>[% user.money_summary.balance_owed | format('%.02f') %]</total_balance_owed>
+    </patron>
+    <location>
+      <name>[% escape_xml(context_org.name) %]</name>
+      <shortname>[% escape_xml(context_org.shortname) FILTER lower %]</shortname>
+      <phone>[% escape_xml(context_org.phone) %]</phone>
+      <addr_street1>[% escape_xml(org_addr.street1) %]</addr_street1>
+      <addr_street2>[% escape_xml(org_addr.street2) %]</addr_street2>
+      <addr_city>[% escape_xml(org_addr.city) %]</addr_city>
+      <addr_state>[% escape_xml(org_addr.state) %]</addr_state>
+      <addr_post_code>[% escape_xml(org_addr.post_code) %]</addr_post_code>
+      <email>[% escape_xml(context_org.email) %]</email>
+      <sys_id>[% context_org.id %]</sys_id>
+    </location>
+    [%- IF circulations.size -%]
+      [%- INCLUDE 'circ-list-template.tt2' circulations=circulations -%]
+    [%- ELSIF holds.size -%]
+      [%- INCLUDE 'hold-list-template.tt2' holds=holds -%]
+    [%- ELSIF transactions.size -%]
+      [%- INCLUDE 'xact-list-template.tt2' transactions=transactions -%]
+    [%- END -%]
+  </notice>

@@ -1,0 +1,26 @@
+[%- USE date -%]
+[%- FOR hold IN holds %]
+    <hold>
+      [%- IF hold.current_copy -%]
+      [%- copy_details = get_title_author(hold.current_copy) %]
+      <title>[% escape_xml(copy_details.title) %]</title>
+      <author>[% escape_xml(copy_details.author) %]</author>
+      <call_number>[% escape_xml(hold.current_copy.call_number.label) %]</call_number>
+      [%- ELSE -%]
+      [%- hold_details = get_hold_details(hold) %]
+      <title>[% escape_xml(hold_details.title) %]</title>
+      <author>[% escape_xml(hold_details.author) %]</author>
+      [%- END %]
+      <pickup_lib>[% escape_xml(context_org.name) %]</pickup_lib>
+      <shelf_expire_date>[% 
+          IF hold.shelf_expire_time;
+            date.format(format_date(hold.shelf_expire_time), '%m/%d/%Y'); 
+          END; 
+    %]</shelf_expire_date>
+      <cancel_date>[% 
+          IF hold.cancel_time;
+            date.format(format_date(hold.cancel_time), '%m/%d/%Y'); 
+          END; 
+    %]</cancel_date>
+    </hold>
+[%- END %]

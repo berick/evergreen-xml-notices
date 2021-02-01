@@ -1,0 +1,14 @@
+[%- USE date -%]
+[%- FOR xact IN transactions %]
+    <item>
+      <transaction_id>[% xact.id %]</transaction_id>
+      <transaction_owed>[% xact.balance_owed %]</transaction_owed>
+      [%- IF xact.xact_type == 'circulation' %]
+      [%- copy_details = get_title_author(xact.circulation.target_copy) %]
+      <title>[% escape_xml(copy_details.title) %]</title>
+      <author>[% escape_xml(copy_details.author) %]</author>
+      <barcode>[% xact.circulation.target_copy.barcode %]</barcode>
+      [%- END %]
+      <transaction_type>[% xact.xact_type %]</transaction_type>
+    </item>
+[%- END %]
