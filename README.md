@@ -10,10 +10,12 @@ notices.
 
 ### Create an Action/Trigger Event Definition
 
-* Should use the 'NOOP\_True' reactor.
+* Use the 'NOOP\_True' reactor.
   * The purpose of the event definition is only to collect target 
     (e.g. circulation ID) information.
 * No template is nececessary
+* It should NOT have a group\_field value.  
+  * Grouping is done by the script.
 * Give it a unique granularity
 * No environment data will be needed, unless one of the other modules
   (e.g. validator) requires it.
@@ -33,12 +35,12 @@ notices.
         'hold_request.cancel.expire_holds_shelf',
         'HoldIsCancelled',
         'NOOP_True',
-        '00:00:30',
-        NULL,
-        'usr', -- usr field
-		'notification.hold.cancel.email', -- opt int
-        NULL,
-        'Hold-Shelf-Expire-Email',
+        '00:00:30',                         -- delay
+        NULL,                               -- max delay
+        'usr',                              -- usr field
+        'notification.hold.cancel.email',   -- opt in
+        NULL,                               -- delay field
+        'Hold-Shelf-Expire-Email',          -- granularity
         '1 year'
     );
 ```
@@ -70,8 +72,6 @@ sudo -u opensrf mkdir -p /openils/var/data/xml-notices
 
 ### Generate and Send the XML File
 
-#### Create destination directory
-
 #### Example 1
 
 ```sh
@@ -81,11 +81,11 @@ sudo -u opensrf mkdir -p /openils/var/data/xml-notices
 #### Example 2
 
 By default, the script processes events whose run\_time occurred yesterday,
-but this can be modified via the --end-date and --window variables.
+but this can be modified via the '--end-date' and '--window' variables.
 
 ```sh
 ./generate-notices.sh --send-xml --window "1 hour" \
-	--end-date "$(date +'%FT%H:00:00')" --granularity Hold-Ready-Locker-Phone
+    --end-date "$(date +'%FT%H:00:00')" --granularity Hold-Ready-Locker-Phone
 ```
 
 
