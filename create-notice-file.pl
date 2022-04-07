@@ -275,6 +275,7 @@ sub process_events {
 
     my $xml_file;
     my $filename = "$output_dir/$event_tag-$end_date.xml";
+    $filename =~ s/://g;
 
     if (-e $filename && !$force) {
         announce('warn', "File $filename already exists.  Skipping");
