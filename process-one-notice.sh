@@ -25,6 +25,9 @@ GENERATOR_SCRIPT="./create-notice-file.pl"
 export OSRF_LOG_CLIENT=1
 
 FILE_NAME="${NOTICE_TAG}-${END_DATE}.xml"
+# remove filename colons
+FILE_NAME=$(echo $FILE_NAME | sed s/://g)
+
 LOCAL_FILE="$OUTPUT_DIR/$FILE_NAME"
 
 function announce {                                                            
