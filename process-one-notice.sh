@@ -24,7 +24,13 @@ AT_BASE_COMMAND="/openils/bin/action_trigger_runner.pl --osrf-config /openils/co
 GENERATOR_SCRIPT="./create-notice-file.pl"
 export OSRF_LOG_CLIENT=1
 
-FILE_NAME="${NOTICE_TAG}-${END_DATE}.xml"
+FILE_NAME=""
+if [ -n "$FILE_DATE" ]; then
+    FILE_NAME="${NOTICE_TAG}-${FILE_DATE}.xml"
+else
+    FILE_NAME="${NOTICE_TAG}-${END_DATE}.xml"
+fi;
+
 # remove filename colons
 FILE_NAME=$(echo $FILE_NAME | sed s/://g)
 
@@ -55,7 +61,7 @@ if [ -z "$NO_GENERATE_XML" -o "$FORCE_GENERATE_XML" ]; then
     $GENERATOR_SCRIPT --verbose $FORCE_GENERATE_XML --output-dir $OUTPUT_DIR \
         --notice-type "$NOTICE_TYPE" --notify-interval "$NOTIFY_INTERVAL" \
         --end-date "$END_DATE" --event-def $EVENT_DEF --event-tag $NOTICE_TAG $FOR_EMAIL \
-        --window "$WINDOW"
+        --window "$WINDOW" --file-date "$FILE_DATE"
 
     if [ $? != 0 ]; then
         set -e

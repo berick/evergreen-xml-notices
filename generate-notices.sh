@@ -25,6 +25,7 @@ set -eu
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )" 
 END_DATE=$(date +'%F');
+FILE_DATE=""
 SCP_DEST="my-account@sftp.exmaple.com:incoming"
 AT_FILTERS="/openils/conf/a_t_filters/"
 WINDOW=""
@@ -60,6 +61,9 @@ Options:
         of time ending with this date / time.  The full size of the 
         time range is specified by --window (defaults to 1 day).
 
+    --file-date <YYYY-MM-DD[Thh:mm:ss]>
+        Optional.  Overrides use of --end-date when naming the output file.
+
     --skip-action-trigger
         Avoid any A/T event processing.  Useful for resending notices.
 
@@ -89,6 +93,7 @@ while [ "$#" -gt 0 ]; do
     case $1 in
         '--granularity') GRANULARITY="$2"; shift;;
         '--end-date') END_DATE="$2"; shift;;
+        '--file-date') FILE_DATE="$2"; shift;;
         '--skip-action-trigger') SKIP_ACTION_TRIGGER="YES";;
         '--no-generate-xml') NO_GENERATE_XML="YES";;
         '--force-generate-xml') FORCE_GENERATE_XML="--force";;
@@ -116,6 +121,7 @@ export FORCE_GENERATE_XML
 export SEND_XML
 export SCP_DEST
 export END_DATE
+export FILE_DATE
 export WINDOW
 export GRANULARITY
 export NOTICE_TYPE
@@ -246,6 +252,7 @@ echo "NOTICE_TYPE=$NOTICE_TYPE"
 echo "NOTIFY_INTERVAL=$NOTIFY_INTERVAL"
 echo "PROCESS_HOOKS=$PROCESS_HOOKS"
 echo "END_DATE=$END_DATE"
+echo "FILE_DATE=$FILE_DATE"
 echo "WINDOW=$WINDOW"
 echo "CUSTOM_FILTERS=$CUSTOM_FILTERS"
 

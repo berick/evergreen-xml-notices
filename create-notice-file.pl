@@ -33,6 +33,7 @@ my $osrf_config = '/openils/conf/opensrf_core.xml';
 my $notice_template = 'xml-notice-template.tt2';
 
 my $end_date;
+my $file_date;
 my $event_def;
 my $event_tag; # e.g. 7-day-overdue-print
 my $core_type;
@@ -107,6 +108,9 @@ Options:
         Process action/trigger events with a run time during the period
         of time ending with this date / time.  The full size of the
         time range is specified by --window (defaults to 1 day).
+
+    --file-date <YYYY-MM-DD[Thh:mm:ss]>
+        Optional.  Overrides --end-date as the date to use in the file name.
 
     --event-def <id>
 
@@ -455,6 +459,7 @@ sub check_params {
 # And we're off...
 GetOptions(
     'end-date=s'        => \$end_date,
+    'file-date=s'       => \$file_date,
     'event-def=s'       => \$event_def,
     'event-tag=s'       => \$event_tag,
     'output-dir=s'      => \$output_dir,
