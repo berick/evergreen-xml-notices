@@ -278,7 +278,8 @@ sub process_events {
     my $events = shift;
 
     my $xml_file;
-    my $filename = "$output_dir/$event_tag-$end_date.xml";
+    my $fdate = $file_date || $end_date;
+    my $filename = "$output_dir/$event_tag-$fdate.xml";
     $filename =~ s/://g;
 
     if (-e $filename && !$force) {
