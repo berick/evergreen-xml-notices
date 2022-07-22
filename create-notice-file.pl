@@ -46,6 +46,9 @@ my $force;
 my $window;
 my $verbose;
 
+# Requires extra data collection.
+my $is_auto_renew = 0;
+
 my $user_flesh = {
     flesh => 3,
     flesh_fields => {
@@ -252,7 +255,7 @@ sub collect_events {
 
     my $results = $e->json_query({
         select => {
-            atev => ['target'],
+            atev => ['target', 'user_data'],
             $core_type => [$usr_field]
         },
         from => {
@@ -307,24 +310,23 @@ sub process_events {
 
     my $usr_count = 0;
     my $cur_usr = -1;
-    my @cur_targets;
+    my @cur_events;
 
     for my $event (@$events) {
         my $user_id = $event->{$usr_field};
-        my $target = $event->{target};
 
         if ($user_id != $cur_usr) {
-            print_one_user($xml_file, $cur_usr, \@cur_targets) if @cur_targets;
+            print_one_user($xml_file, $cur_usr, \@cur_events) if @cur_events;
             $cur_usr = $user_id;
             $usr_count++;
-            @cur_targets = ($target);
+            @cur_events = ($event);
         } else {
-            push(@cur_targets, $target);
+            push(@cur_events, $event);
         }
     }
 
     # The loop will exit before the last clump of notices is processed.
-    print_one_user($xml_file, $cur_usr, \@cur_targets) if @cur_targets;
+    print_one_user($xml_file, $cur_usr, \@cur_events) if @cur_events;
 
     print $xml_file "</notices>\n";
     close $xml_file;
@@ -403,7 +405,35 @@ sub collect_user_and_targets {
 }
 
 sub print_one_user {
-    my ($xml_file, $user_id, $target_ids) = @_;
+    my ($xml_file, $user_id, $events) = @_;
+
+    my $target_ids = [ map {$_->{target}} @$events ];
+
+    my $get_due_date = sub {
+        # Due dates for autorenew circs come from the event user data
+        # on success.  Otherwise, they come from the source circ.
+        my $circ = shift;
+        if ($is_auto_renew && (
+            my ($event) = grep {$_->{target} == $circ->id} @$events)) {
+
+            my $ud;
+            eval { $ud = OpenSRF::Utils::JSON->JSON2perl($event->{user_data}); };
+            return $ud->{due_date} if $ud && $ud->{is_renewed};
+        }
+
+        return $circ->due_date;
+    };
+
+    my $get_auto_renew_success = sub {
+        my $circ = shift;
+        if ($is_auto_renew && (
+            my ($event) = grep {$_->{target} == $circ->id} @$events)) {
+            my $ud;
+            eval { $ud = OpenSRF::Utils::JSON->JSON2perl($event->{user_data}); };
+            return $ud->{is_renewed} if $ud;
+        }
+        return 0;
+    };
 
     my $ctx = {
         total_notice_fines => 0,
@@ -417,7 +447,9 @@ sub print_one_user {
         get_title_author => \&get_title_author,
         get_hold_details => \&get_hold_details,
         notice_type => $notice_type,
-        notify_interval => $notify_interval
+        notify_interval => $notify_interval,
+        get_due_date => $get_due_date,
+        get_auto_renew_success => $get_auto_renew_success
     };
 
     my $continue = collect_user_and_targets($ctx, $user_id, $target_ids);
@@ -451,6 +483,7 @@ sub check_params {
 
     $core_type = $def->hook->core_type;
     $usr_field = $core_type eq 'au' ? 'id' : 'usr';
+    $is_auto_renew = $def->hook->key eq 'autorenewal';
 
     announce('info', "Found " . $def->name .
         " with core type '$core_type' and usr field '$usr_field'");

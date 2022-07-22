@@ -5,7 +5,8 @@
       <title>[% escape_xml(copy_details.title) %]</title>
       <author>[% escape_xml(copy_details.author) %]</author>
       <checkout_date>[% date.format(format_date(circ.xact_start), '%m/%d/%Y') %]</checkout_date>
-      <due_date>[% date.format(format_date(circ.due_date), '%m/%d/%Y') %]</due_date>
+      <due_date>[% date.format(format_date(get_due_date(circ)), '%m/%d/%Y') %]</due_date>
+      <auto_renew_success>[% IF get_auto_renew_success(circ) %]true[% ELSE %]false[% END %]</auto_renew_success> 
       <call_number>[% escape_xml(circ.target_copy.call_number.label) %]</call_number>
       <barcode>[% escape_xml(circ.target_copy.barcode) %]</barcode>
       <shelf_location>[% escape_xml(circ.target_copy.location.name) %]</shelf_location>
