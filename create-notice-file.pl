@@ -418,7 +418,7 @@ sub print_one_user {
 
             my $ud;
             eval { $ud = OpenSRF::Utils::JSON->JSON2perl($event->{user_data}); };
-            return $ud->{due_date} if $ud && $ud->{is_renewed};
+            return $ud->{new_due_date} if $ud && $ud->{is_renewed};
         }
 
         return $circ->due_date;
