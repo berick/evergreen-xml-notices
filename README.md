@@ -1,5 +1,10 @@
 # evergreen-xml-notices
 
+> [!IMPORTANT]
+> The documtation below still holds, but the latest version of the code running at KCLS
+> (as of 2024-09-12, where this code originated)
+> lives at https://github.com/kcls/evergreen-pub/tree/release/3.11/KCLS/utility-scripts/xml-notices
+
 XML Notice File Generator For Evergreen
 
 Generate and send XML files for Evergreen Action/Trigger event definitions.
